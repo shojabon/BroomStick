@@ -1,0 +1,41 @@
+{
+  "routes": [
+    {
+      "routes": {
+        "paths": [ "/shop/<username>/info" ]
+      },
+      "group": {
+        "allowedGroups": [ "Admin" ]
+      },
+      "cache": {
+        "interval": 1
+      },
+      "backends": {
+        "endpoints": ["http://127.0.0.1:80"]
+      }
+    },
+    {
+      "routes": {
+        "paths": [ "/test" ]
+      },
+      "backends": {
+        "endpoints": ["http://127.0.0.1:4567/v1/server/exec"]
+      }
+    }
+  ],
+  "default": {
+    "routes": {
+      "paths": [],
+      "removeRequestPrefix": true
+    },
+    "group": {
+      "allowedGroups": [ "Admin" ]
+    },
+    "cache": {
+      "interval": 0
+    },
+    "backends": {
+      "endpoints": []
+    }
+  }
+}
