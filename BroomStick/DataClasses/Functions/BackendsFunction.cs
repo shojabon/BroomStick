@@ -2,7 +2,8 @@
 {
     public class BackendsFunction : IRouteFunction
     {
-        public List<string> Endpoints { get; set; } = new();
+
+        public List<string> Endpoints { get; set; }
 
         public APIResponse IsAllowedToUse(HttpRequest request)
         {

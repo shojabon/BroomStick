@@ -2,6 +2,7 @@
 {
     public class CacheFunction : IRouteFunction
     {
+
         public int Interval { get; set; }
 
     }

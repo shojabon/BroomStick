@@ -9,19 +9,43 @@ namespace BroomStick.Controllers
     public class AuthController : ControllerBase
     {
         private readonly BroomStick.DataClasses.BroomStick _broomStick;
+        private readonly IConfiguration _config;
 
-        public AuthController(BroomStick.DataClasses.BroomStick broomStick)
+        public AuthController(BroomStick.DataClasses.BroomStick broomStick, IConfiguration config)
         {
             _broomStick = broomStick;
-            Console.Write("test");
-            // perform some initialization or setup logic here using _broomStick
+            _config = config;
         }
 
-
-        [HttpPost("create-user")]
-        public IActionResult CreateUser(string userId, string username, string password, [FromBody] BsonDocument metadata)
+        public bool IsAuthenticated(HttpRequest request)
         {
-            DataClasses.BroomStick.Authenticator.CreateUser(userId, username, password, metadata);
+            if (!request.Headers.ContainsKey("Authenticate")) return false;
+            if (!_config["AuthenticationAPIKey"].Equals(request.Headers["Authenticate"])) return false;
+            return true;
+        }
+
+        public class RegisterRequest
+        {
+            public string username { get; set; }
+            public string password { get; set; }
+            public string userId { get; set; }
+            public BsonDocument? metadata { get; set; }
+        }
+
+        [HttpPost("register")]
+        public IActionResult CreateUser([FromBody] RegisterRequest request)
+        {
+            if (!IsAuthenticated(Request))
+            {
+                return BadRequest("Unauthorized");
+            }
+            try
+            {
+                DataClasses.BroomStick.Authenticator.CreateUser(request.userId, request.username, request.password, request.metadata);
+            }catch(Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
             return Ok("User created successfully.");
         }
 
@@ -35,6 +59,10 @@ namespace BroomStick.Controllers
         [HttpPost("authenticate")]
         public IActionResult Authenticate([FromBody] AuthenticationRequest request)
         {
+            if (!IsAuthenticated(Request))
+            {
+                return BadRequest("Unauthorized");
+            }
             var token = DataClasses.BroomStick.Authenticator.Authenticate(request.username, request.password);
             if (token != null)
             {

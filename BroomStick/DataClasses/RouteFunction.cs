@@ -4,7 +4,8 @@ namespace BroomStick.DataClasses
 {
     public interface IRouteFunction
     {
-        APIResponse IsAllowedToUse(HttpRequest request)
+
+        public APIResponse IsAllowedToUse(HttpRequest request)
         {
             return CommonAPIResponse.Success;
         }
@@ -14,8 +15,8 @@ namespace BroomStick.DataClasses
             return true;
         }
 
-        void Initialize() { }
+        public void Initialize() { }
 
-        void HandleRequest(HttpRequest request, HttpContent proxiedReuqest) { }
+        public void HandleRequest(HttpRequest request, HttpContent proxiedReuqest) { }
     }
 }

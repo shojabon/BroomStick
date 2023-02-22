@@ -36,10 +36,14 @@ namespace BroomStick.DataClasses
         }
 
 
-        public void CreateUser(string userId, string username, string password, BsonDocument metadata)
+        public void CreateUser(string userId, string username, string password, BsonDocument? metadata)
         {
             // Hash the password using SHA256
             var hashedPassword = HashPassword(password);
+            if(metadata == null)
+            {
+                metadata = new BsonDocument();
+            }
 
             // Create a new document with the user data
             var user = new BsonDocument

@@ -23,7 +23,6 @@ namespace BroomStick.Controllers
             {
                 return new ObjectResult(CommonAPIResponse.RouteNotFound);
             }
-
             return await response.GetObjectResult();
         }
     }

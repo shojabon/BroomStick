@@ -14,12 +14,12 @@ namespace BroomStick.DataClasses
 {
     public class RouteObject
     {
-        public RoutesFunction Route { get; set; } = new();
-        public GroupFunction Group { get; set; } = new();
-        public CacheFunction Cache { get; set; } = new();
+        public RoutesFunction Route { get; set; }
+        public GroupFunction Group { get; set; }
+        public CacheFunction Cache { get; set; }
 
-        public BackendsFunction Backends { get; set; } = new();
-        public AuthenticationFunction Authentication { get; set; } = new();
+        public BackendsFunction Backends { get; set; }
+        public AuthenticationFunction Authentication { get; set; }
 
         public List<IRouteFunction> RouteFunctions = new();
 

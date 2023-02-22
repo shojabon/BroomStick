@@ -12,11 +12,7 @@ namespace BroomStick.DataClasses.Functions
 
         public bool MatchRoute(HttpRequest request)
         {
-            if (!MatchesPath(request.Path))
-            {
-                return false;
-            }
-            return true;
+            return MatchesPath(request.Path);
         }
 
         public bool MatchesPath(string requestPath)
@@ -29,6 +25,7 @@ namespace BroomStick.DataClasses.Functions
 
             var pattern = Regex.Replace(Regex.Escape(Path), @"\<.*?\>", ".*");
             var match = Regex.Match(route, "^" + pattern + ".*$");
+            Console.WriteLine(pattern + " " + route + " " + match);
             if (match.Success)
             {
                 return true;

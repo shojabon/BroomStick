@@ -2,6 +2,7 @@
 {
     public class GroupFunction : IRouteFunction
     {
+
         public List<string> AllowedGroups { get; set; }
     }
 }
