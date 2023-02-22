@@ -26,6 +26,14 @@ namespace BroomStick.DataClasses
             // Get the database object
             var database = Mongodb.GetDatabase("BroomStick");
             Collection = database.GetCollection<BsonDocument>("accounts");
+            /*
+                        var indexKeys = Builders<BsonDocument>.IndexKeys.Ascending("user_id");
+                        var indexOptions = new CreateIndexOptions() { Unique = true };
+                        var indexModel = new CreateIndexModel<BsonDocument>(indexKeys, indexOptions);
+                        Collection.Indexes.CreateOne(indexModel);*/
+
+            CreateUser("Sho0uuid", "Sho00", "testpasasword", new BsonDocument { });
+            Console.WriteLine(Authenticate("Sho0", "testpassword"));
         }
 
 
@@ -84,6 +92,28 @@ namespace BroomStick.DataClasses
             {
                 // Return null if the authentication failed
                 return null;
+            }
+        }
+
+        public static bool AuthenticateToken(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes("SecretTokenForNow");
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
