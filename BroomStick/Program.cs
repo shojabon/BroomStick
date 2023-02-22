@@ -7,7 +7,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
-
+var broomStick = new BroomStick.DataClasses.BroomStick();
+builder.Services.AddSingleton<BroomStick.DataClasses.BroomStick>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -17,7 +18,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var broomStick = new BroomStick.DataClasses.BroomStick();
 
 app.UseHttpsRedirection();
 

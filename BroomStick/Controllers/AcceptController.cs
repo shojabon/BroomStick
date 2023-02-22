@@ -12,10 +12,6 @@ namespace BroomStick.Controllers
         public async Task<IActionResult> HandleRoute(string path, [FromServices] IHttpContextAccessor httpContextAccessor)
         {
             var routes = DataClasses.BroomStick.RouteObjects;
-            if(routes == null || routes.Count == 0 || path == null)
-            {
-                return NotFound("Fail");
-            }
             RouteObject? matchedRoute = routes.FirstOrDefault(r => r.IsRouteMatching(Request));
             if(matchedRoute == null)
             {
