@@ -1,51 +1,46 @@
-﻿using System.Text.RegularExpressions;
+﻿using Microsoft.AspNetCore.Routing;
+using System.Text.RegularExpressions;
 
 namespace BroomStick.DataClasses.Functions
 {
     public class RoutesFunction : IRouteFunction
     {
 
-        public List<string> Paths { get; set; }
+        public string Path { get; set; }
         public bool RemoveRequestPrefix { get; set; }
 
-        public void Initialize()
-        {
-            if (Paths != null)
-            {
-                Paths = Paths.OrderByDescending(s => s.Length).ToList();
-            }
-            else
-            {
-                Paths = new();
-            }
-        }
 
         public bool IsAllowedToUse(HttpRequest request)
         {
-            Console.WriteLine("testa");
-            return MatchesRoute(request.Path);
+            return MatchesPath(request.Path);
         }
 
-        public bool MatchesRoute(string requestPath)
+        public bool MatchesPath(string requestPath)
         {
-            if (Paths == null || Paths.Count == 0)
+            if (Path == null)
             {
                 return false;
             }
             string route = CleanPath(requestPath);
 
-            foreach (var r in Paths)
+            var pattern = Regex.Replace(Regex.Escape(Path), @"\<.*?\>", ".*");
+            var match = Regex.Match(route, "^" + pattern + ".*$");
+            if (match.Success)
             {
-                var pattern = Regex.Replace(Regex.Escape(r), @"\<.*?\>", ".*");
-                var match = Regex.Match(route, "^" + pattern + "$");
-                Console.WriteLine(pattern + " " + route);
-                if (match.Success)
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;
+        }
+
+        public string GetRequestingExtendedPath(string path)
+        {
+            if (!RemoveRequestPrefix)
+            {
+                return path;
+            }
+            var pattern = Regex.Replace(Regex.Escape(Path), @"\<.*?\>", ".*");
+            return Regex.Replace(path, pattern, "");
         }
 
 

@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Collections;
+using System.IO;
 
 namespace BroomStick.DataClasses
 {
     public class RouteObject
     {
-        public RoutesFunction Routes { get; set; }
+        public RoutesFunction Route { get; set; }
         public GroupFunction Group { get; set; }
         public CacheFunction Cache { get; set; }
 
@@ -33,36 +34,41 @@ namespace BroomStick.DataClasses
 
             var httpClient = new HttpClient();
 
+
+            HttpContent content = new StreamContent(request.Body);
             foreach (var header in request.Headers)
             {
                 if (!header.Key.StartsWith("x-")) continue;
-                httpClient.DefaultRequestHeaders.Add(header.Key, header.Value.ToArray());
+                content.Headers.Add(header.Key, header.Value.ToArray());
             }
-
-
-            // json body
-            string json = "{}";
-            if(request.HasFormContentType)
+            if(request.ContentType != null) content.Headers.Add("content-type", request.ContentType);
+            if (request.HasFormContentType)
             {
-                Dictionary<string, string> formData = request.Form.ToDictionary(x => x.Key, x => x.Value.ToString());
-                json = JsonConvert.SerializeObject(formData);
+                var formData = new FormUrlEncodedContent(request.Form.Select(x => new KeyValuePair<string, string>(x.Key, x.Value)));
+                content = formData;
             }
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+
 
             HttpResponseMessage? response = null;
+
+
+            var backendPath = backendUrl + Route.GetRequestingExtendedPath(request.Path);
+
+
             switch (request.Method)
             {
                 case "POST":
-                    response = await httpClient.PostAsync(backendUrl + request.Path, content);
+                    response = await httpClient.PostAsync(backendPath, content);
                     break;
                 case "PUT":
-                    response = await httpClient.PutAsync(backendUrl + request.Path, content);
+                    response = await httpClient.PutAsync(backendPath, content);
                     break;
                 case "GET":
-                    response = await httpClient.GetAsync(backendUrl + request.Path);
+                    response = await httpClient.GetAsync(backendPath);
                     break;
                 case "DELETE":
-                    response = await httpClient.DeleteAsync(backendUrl + request.Path);
+                    response = await httpClient.DeleteAsync(backendPath);
                     break;
             }
             if(response == null) {
@@ -76,7 +82,7 @@ namespace BroomStick.DataClasses
 
         public void InitializeRouteAfter()
         {
-            RouteFunctions.Add(Routes);
+            RouteFunctions.Add(Route);
             RouteFunctions.Add(Group);
             RouteFunctions.Add(Cache);
             RouteFunctions.Add(Backends);

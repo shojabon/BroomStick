@@ -1,8 +1,8 @@
 {
   "routes": [
     {
-      "routes": {
-        "paths": [ "/shop/<username>/info" ]
+      "route": {
+        "path": "/shop/<username>/info"
       },
       "group": {
         "allowedGroups": [ "Admin" ]
@@ -15,17 +15,17 @@
       }
     },
     {
-      "routes": {
-        "paths": [ "/test" ]
+      "route": {
+        "path": "/test"
       },
       "backends": {
-        "endpoints": ["http://127.0.0.1:4567/v1/server/exec"]
+        "endpoints": ["http://127.0.0.1:4567/v1/server/scommand"]
       }
     }
   ],
   "default": {
-    "routes": {
-      "paths": [],
+    "route": {
+      "path": null,
       "removeRequestPrefix": true
     },
     "group": {
