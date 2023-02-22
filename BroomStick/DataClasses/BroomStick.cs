@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Driver;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BroomStick.DataClasses
@@ -6,10 +7,10 @@ namespace BroomStick.DataClasses
     public class BroomStick
     {
         public static List<RouteObject> RouteObjects { get; } = new List<RouteObject>();
+        public static Authenticator Authenticator { get; } = new Authenticator();
         public BroomStick()
         {
             this.LoadRoutes();
-
         }
 
         public void LoadRoutes()

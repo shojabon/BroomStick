@@ -49,12 +49,8 @@ namespace BroomStick.DataClasses
             }
 
 
-
-            HttpResponseMessage? response = null;
-
-
             var backendPath = backendUrl + Route.GetRequestingExtendedPath(request.Path);
-
+            HttpResponseMessage? response = null;
 
             switch (request.Method)
             {
