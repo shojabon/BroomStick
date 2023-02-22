@@ -14,11 +14,12 @@ namespace BroomStick.DataClasses
 {
     public class RouteObject
     {
-        public RoutesFunction Route { get; set; }
-        public GroupFunction Group { get; set; }
-        public CacheFunction Cache { get; set; }
+        public RoutesFunction Route { get; set; } = new();
+        public GroupFunction Group { get; set; } = new();
+        public CacheFunction Cache { get; set; } = new();
 
-        public BackendsFunction Backends { get; set; }
+        public BackendsFunction Backends { get; set; } = new();
+        public AuthenticationFunction Authentication { get; set; } = new();
 
         public List<IRouteFunction> RouteFunctions = new();
 
@@ -29,7 +30,10 @@ namespace BroomStick.DataClasses
             {
                 throw new InvalidOperationException("No backends configured for route.");
             }
-
+            if(!IsAllowedToUseRoute(request))
+            {
+                return "Not Allowed To Use";
+            }
             string backendUrl = Backends.Endpoints[new Random().Next(Backends.Endpoints.Count)];
 
             var httpClient = new HttpClient();
@@ -46,6 +50,13 @@ namespace BroomStick.DataClasses
             {
                 var formData = new FormUrlEncodedContent(request.Form.Select(x => new KeyValuePair<string, string>(x.Key, x.Value)));
                 content = formData;
+            }
+
+            foreach (var routeFunction in RouteFunctions)
+            {
+                var instance = routeFunction as IRouteFunction;
+                if (instance == null) continue;
+                instance.HandleRequest(request, content);
             }
 
 
@@ -82,6 +93,7 @@ namespace BroomStick.DataClasses
             RouteFunctions.Add(Group);
             RouteFunctions.Add(Cache);
             RouteFunctions.Add(Backends);
+            RouteFunctions.Add(Authentication);
 
             foreach (var routeFunction in RouteFunctions)
             {

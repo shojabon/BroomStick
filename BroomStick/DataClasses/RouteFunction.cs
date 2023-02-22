@@ -10,5 +10,7 @@ namespace BroomStick.DataClasses
         }
 
         void Initialize() { }
+
+        void HandleRequest(HttpRequest request, HttpContent proxiedReuqest) { }
     }
 }

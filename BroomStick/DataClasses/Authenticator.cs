@@ -16,6 +16,7 @@ namespace BroomStick.DataClasses
 
         public static MongoClient? Mongodb = null;
         private IMongoCollection<BsonDocument> Collection;
+        static string SecretToken = "testSecretForNow";
         public Authenticator()
         {
             IConfiguration configuration = new ConfigurationBuilder()
@@ -26,14 +27,12 @@ namespace BroomStick.DataClasses
             // Get the database object
             var database = Mongodb.GetDatabase("BroomStick");
             Collection = database.GetCollection<BsonDocument>("accounts");
-            /*
-                        var indexKeys = Builders<BsonDocument>.IndexKeys.Ascending("user_id");
-                        var indexOptions = new CreateIndexOptions() { Unique = true };
-                        var indexModel = new CreateIndexModel<BsonDocument>(indexKeys, indexOptions);
-                        Collection.Indexes.CreateOne(indexModel);*/
+            CreateUser("Sho0uuid", "Sho0", "testpassword", new BsonDocument { });
+            string jtw = Authenticate("Sho0", "testpassword");
+            Console.WriteLine(jtw);
+            Console.WriteLine(AuthenticateToken(jtw));
+            Console.WriteLine(GetUser(jtw).UserId);
 
-            CreateUser("Sho0uuid", "Sho00", "testpasasword", new BsonDocument { });
-            Console.WriteLine(Authenticate("Sho0", "testpassword"));
         }
 
 
@@ -74,7 +73,7 @@ namespace BroomStick.DataClasses
             {
                 // Generate a JWT token for the authenticated user
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes("SecretTokenForNow");
+                var key = Encoding.ASCII.GetBytes(SecretToken);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new Claim[]
@@ -100,7 +99,7 @@ namespace BroomStick.DataClasses
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes("SecretTokenForNow");
+                var key = Encoding.ASCII.GetBytes(SecretToken);
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
@@ -115,6 +114,48 @@ namespace BroomStick.DataClasses
             {
                 return false;
             }
+        }
+
+        public AuthenticatedUser GetUser(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(SecretToken);
+                var parameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                };
+
+                var claimsPrincipal = tokenHandler.ValidateToken(token, parameters, out var validatedToken);
+
+                if (claimsPrincipal.Identity.IsAuthenticated)
+                {
+                    var username = claimsPrincipal.Identity.Name;
+                    var filter = Builders<BsonDocument>.Filter.Eq("username", username);
+                    var user = Collection.Find(filter).FirstOrDefault();
+
+                    if (user != null)
+                    {
+                        var userId = user["user_id"].AsString;
+                        var metadata = user["metadata"].AsBsonDocument;
+                        return new AuthenticatedUser(userId, username, metadata);
+                    }
+                }
+            }
+            catch (SecurityTokenException)
+            {
+                // Invalid token
+            }
+            catch
+            {
+                // Other errors
+            }
+            return null;
         }
 
         private string HashPassword(string password)
