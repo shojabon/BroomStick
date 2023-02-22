@@ -10,9 +10,13 @@ namespace BroomStick.DataClasses.Functions
         public bool RemoveRequestPrefix { get; set; }
 
 
-        public bool IsAllowedToUse(HttpRequest request)
+        public bool MatchRoute(HttpRequest request)
         {
-            return MatchesPath(request.Path);
+            if (!MatchesPath(request.Path))
+            {
+                return false;
+            }
+            return true;
         }
 
         public bool MatchesPath(string requestPath)

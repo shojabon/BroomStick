@@ -24,15 +24,12 @@ namespace BroomStick.DataClasses
         public List<IRouteFunction> RouteFunctions = new();
 
 
-        public async Task<String?> ExecuteRequest(HttpRequest request)
+        public async Task<APIResponse?> ExecuteRequest(HttpRequest request)
         {
-            if (Backends == null || Backends.Endpoints.Count == 0)
+            var allowedToUse = IsAllowedToUseRoute(request);
+            if (allowedToUse.Status != "success")
             {
-                throw new InvalidOperationException("No backends configured for route.");
-            }
-            if(!IsAllowedToUseRoute(request))
-            {
-                return "Not Allowed To Use";
+                return allowedToUse;
             }
             string backendUrl = Backends.Endpoints[new Random().Next(Backends.Endpoints.Count)];
 
@@ -81,8 +78,9 @@ namespace BroomStick.DataClasses
             if(response == null) {
                 return null;
             }
-            var responseContent = await response.Content.ReadAsStringAsync();
-            return responseContent;
+            var proxiedResponse = new APIResponse("success", null , null, (int) response.StatusCode);
+            proxiedResponse.SetHttpResponse(response);
+            return proxiedResponse;
         }
 
 
@@ -103,13 +101,26 @@ namespace BroomStick.DataClasses
             }
         }
 
-        public bool IsAllowedToUseRoute(HttpRequest request)
+        public APIResponse IsAllowedToUseRoute(HttpRequest request)
         {
             foreach (var routeFunction in RouteFunctions)
             {
                 IRouteFunction func = routeFunction as IRouteFunction;
                 if (func == null) continue;
-                if (!func.IsAllowedToUse(request)) return false;
+                var response = func.IsAllowedToUse(request);
+                if (response.Status == "success") continue;
+                return response;
+            }
+            return CommonAPIResponse.Success;
+        }
+
+        public bool IsRouteMatching(HttpRequest request)
+        {
+            foreach (var routeFunction in RouteFunctions)
+            {
+                IRouteFunction func = routeFunction as IRouteFunction;
+                if (func == null) continue;
+                if(!func.MatchRoute(request)) return false;
             }
             return true;
         }

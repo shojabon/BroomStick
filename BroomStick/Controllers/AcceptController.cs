@@ -1,6 +1,7 @@
 ﻿using BroomStick.DataClasses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace BroomStick.Controllers
 {
@@ -15,16 +16,19 @@ namespace BroomStick.Controllers
             {
                 return NotFound("Fail");
             }
-            RouteObject? matchedRoute = routes.FirstOrDefault(r => r.IsAllowedToUseRoute(Request));
-            if (matchedRoute != null)
+            RouteObject? matchedRoute = routes.FirstOrDefault(r => r.IsRouteMatching(Request));
+            if(matchedRoute == null)
             {
-                var response = await matchedRoute.ExecuteRequest(Request);
-                return Ok(response);
+                return new ObjectResult(CommonAPIResponse.RouteNotFound);
             }
-            else
+
+            var response = await matchedRoute.ExecuteRequest(Request);
+            if (response == null)
             {
-                return NotFound("Fail");
+                return new ObjectResult(CommonAPIResponse.RouteNotFound);
             }
+
+            return await response.GetObjectResult();
         }
     }
 }

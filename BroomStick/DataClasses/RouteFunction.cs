@@ -4,7 +4,12 @@ namespace BroomStick.DataClasses
 {
     public interface IRouteFunction
     {
-        bool IsAllowedToUse(HttpRequest request)
+        APIResponse IsAllowedToUse(HttpRequest request)
+        {
+            return CommonAPIResponse.Success;
+        }
+
+        public bool MatchRoute(HttpRequest request)
         {
             return true;
         }
