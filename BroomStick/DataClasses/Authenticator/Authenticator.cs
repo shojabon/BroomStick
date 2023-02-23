@@ -116,6 +116,7 @@ namespace BroomStick.DataClasses.Authenticator
 
         public static AuthenticatedUser GetUser(string token)
         {
+            if (token == null) return null;
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();

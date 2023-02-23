@@ -18,5 +18,13 @@ namespace BroomStick.DataClasses
         public void Initialize() { }
 
         public void HandleRequest(HttpRequest request, HttpContent proxiedReuqest) { }
+        public APIResponse? BeforeHandleRequest(HttpRequest request) 
+        {
+            return null;
+        }
+
+        public void AfterHandleRequest(HttpRequest request, APIResponse proxiedReuqest) { }
+
+
     }
 }

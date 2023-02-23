@@ -8,8 +8,12 @@
         public APIResponse IsAllowedToUse(HttpRequest request)
         {
             var userObject = Authenticator.Authenticator.GetUser(request.Headers["Authenticate"]);
-            if (userObject == null) return CommonAPIResponse.UnAuthorized;
-            var PermissionLevel = GetGroupPermissionLevel(userObject.GetGroup());
+            var PermissionLevel = 0;
+            if (userObject != null)
+            {
+                PermissionLevel = GetGroupPermissionLevel(userObject.GetGroup());
+            }
+
             bool Allowed = false;
             foreach(var group in AllowedGroups)
             {

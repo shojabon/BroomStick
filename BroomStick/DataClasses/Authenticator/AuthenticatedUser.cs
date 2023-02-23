@@ -19,7 +19,7 @@ namespace BroomStick.DataClasses.Authenticator
         {
             if (!Metadata.Contains("permissionGroup"))
             {
-                return "Guest";
+                return "User";
             }
             return Metadata.GetElement("permissionGroup").Value.ToString();
         }

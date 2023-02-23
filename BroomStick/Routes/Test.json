@@ -5,10 +5,10 @@
         "path": "/shop/<username>/info"
       },
       "group": {
-        "allowedGroups": [ "Admin"]
+        "allowedGroups": ["Admin", "User", "Guest"]
       },
       "cache": {
-        "interval": 1
+        "interval": 10
       },
       "backends": {
         "endpoints": [ "http://192.168.1.108:80" ]
@@ -24,7 +24,8 @@
       "allowedGroups": [ "Admin" ]
     },
     "cache": {
-      "interval": 0
+      "interval": 1,
+      "TrackUser": true
     },
     "backends": {
       "endpoints": []

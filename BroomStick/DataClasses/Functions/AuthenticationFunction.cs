@@ -1,4 +1,6 @@
-﻿namespace BroomStick.DataClasses.Functions
+﻿using Amazon.Runtime.Internal;
+
+namespace BroomStick.DataClasses.Functions
 {
     public class AuthenticationFunction : IRouteFunction
     {
@@ -9,16 +11,20 @@
         }
         public APIResponse IsAllowedToUse(HttpRequest request)
         {
-            if(RouteObject.Group.AllowedGroups == null || RouteObject.Group.AllowedGroups.Count == 0)
+            if (request.Headers.ContainsKey("Authenticate"))
             {
-                return CommonAPIResponse.Success;
+                if (!Authenticator.Authenticator.AuthenticateToken(request.Headers["Authenticate"])) return CommonAPIResponse.UnAuthorized;
             }
-            if (!request.Headers.ContainsKey("Authenticate")) return CommonAPIResponse.UnAuthorized;
-            if (!Authenticator.Authenticator.AuthenticateToken(request.Headers["Authenticate"])) return CommonAPIResponse.UnAuthorized;
             return CommonAPIResponse.Success;
         }
         public void HandleRequest(HttpRequest request, HttpContent proxiedReuqest)
         {
+
+            var userObject = Authenticator.Authenticator.GetUser(request.Headers["Authenticate"]);
+            if(userObject == null) 
+            {
+                return;
+            }
             proxiedReuqest.Headers.Add("Authenticate", request.Headers["Authenticate"].ToArray());
         }
 

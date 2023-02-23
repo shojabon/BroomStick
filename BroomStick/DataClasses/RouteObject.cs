@@ -36,6 +36,15 @@ namespace BroomStick.DataClasses
             {
                 return allowedToUse;
             }
+
+            var beforeHandleRequest = BeforeHandleRequest(request);
+            if(beforeHandleRequest != null) 
+            {
+                return beforeHandleRequest;
+            }
+
+
+
             string backendUrl = Backends.Endpoints[new Random().Next(Backends.Endpoints.Count)];
 
             var httpClient = new HttpClient();
@@ -85,6 +94,7 @@ namespace BroomStick.DataClasses
             }
             var proxiedResponse = new APIResponse("success", null , null, (int) response.StatusCode);
             proxiedResponse.SetHttpResponse(response);
+            AfterHandleRequest(request, proxiedResponse);
             return proxiedResponse;
         }
 
@@ -118,6 +128,29 @@ namespace BroomStick.DataClasses
                 return response;
             }
             return CommonAPIResponse.Success;
+        }
+
+        public APIResponse? BeforeHandleRequest(HttpRequest request)
+        {
+            foreach (var routeFunction in RouteFunctions)
+            {
+                IRouteFunction func = routeFunction as IRouteFunction;
+                if (func == null) continue;
+                var response = func.BeforeHandleRequest(request);
+                if (response == null) continue;
+                return response;
+            }
+            return null;
+        }
+
+        public void AfterHandleRequest(HttpRequest request, APIResponse proxyResponse)
+        {
+            foreach (var routeFunction in RouteFunctions)
+            {
+                IRouteFunction func = routeFunction as IRouteFunction;
+                if (func == null) continue;
+                func.AfterHandleRequest(request, proxyResponse);
+            }
         }
 
         public bool IsRouteMatching(HttpRequest request)
