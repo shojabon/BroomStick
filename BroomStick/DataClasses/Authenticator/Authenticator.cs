@@ -21,6 +21,8 @@ namespace BroomStick.DataClasses.Authenticator
             Configuration = new ConfigurationBuilder()
             .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
             .Build();
+            SecretToken = Configuration["AuthenticatorSecret"];
+            Console.WriteLine(SecretToken);
 
             Mongodb = new MongoClient(Configuration["MongodbConnection"]);
 
@@ -161,7 +163,7 @@ namespace BroomStick.DataClasses.Authenticator
         {
             using (SHA256 sha256 = SHA256.Create())
             {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(SecretToken + password));
                 return Convert.ToBase64String(hashBytes);
             }
         }
