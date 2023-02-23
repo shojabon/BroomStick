@@ -1,6 +1,4 @@
-﻿
-
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Collections;
@@ -9,13 +7,13 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace BroomStick.DataClasses
+namespace BroomStick.DataClasses.Authenticator
 {
     public class Authenticator
     {
 
         public static MongoClient? Mongodb = null;
-        private IMongoCollection<BsonDocument> Collection;
+        private static IMongoCollection<BsonDocument>? Collection;
         static string SecretToken = "testSecretForNow";
         public static IConfiguration? Configuration;
         public Authenticator(IWebHostEnvironment environment)
@@ -36,7 +34,7 @@ namespace BroomStick.DataClasses
         {
             // Hash the password using SHA256
             var hashedPassword = HashPassword(password);
-            if(metadata == null)
+            if (metadata == null)
             {
                 metadata = new BsonDocument();
             }
@@ -44,14 +42,14 @@ namespace BroomStick.DataClasses
             // Create a new document with the user data
             var user = new BsonDocument
         {
-            {"user_id", userId},
+            {"userId", userId},
             {"username", username},
             {"password", hashedPassword},
             {"metadata", metadata}
         };
 
             // Insert or update the user document
-            var filter = Builders<BsonDocument>.Filter.Eq("user_id", userId);
+            var filter = Builders<BsonDocument>.Filter.Eq("userId", userId);
             var options = new FindOneAndReplaceOptions<BsonDocument>() { IsUpsert = true };
             Collection.FindOneAndReplace(filter, user, options);
         }
@@ -116,7 +114,7 @@ namespace BroomStick.DataClasses
             }
         }
 
-        public AuthenticatedUser GetUser(string token)
+        public static AuthenticatedUser GetUser(string token)
         {
             try
             {
@@ -141,7 +139,7 @@ namespace BroomStick.DataClasses
 
                     if (user != null)
                     {
-                        var userId = user["user_id"].AsString;
+                        var userId = user["userId"].AsString;
                         var metadata = user["metadata"].AsBsonDocument;
                         return new AuthenticatedUser(userId, username, metadata);
                     }
@@ -162,7 +160,7 @@ namespace BroomStick.DataClasses
         {
             using (SHA256 sha256 = SHA256.Create())
             {
-                byte[] hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return Convert.ToBase64String(hashBytes);
             }
         }

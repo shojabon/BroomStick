@@ -19,18 +19,13 @@
     },
     "Docker-Development": {
       "commandName": "Docker",
+      "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "development"
       },
       "publishAllPorts": true,
       "useSSL": true
-    },
-    "Docker-Release": {
-      "commandName": "Docker",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "release"
-      }
     },
     "BroomStickRelease": {
       "commandName": "Project",
@@ -40,6 +35,13 @@
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7096;http://localhost:5157"
+    },
+    "Docker-Production": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "production"
+      }
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",

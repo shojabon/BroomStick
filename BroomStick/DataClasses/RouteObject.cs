@@ -92,11 +92,11 @@ namespace BroomStick.DataClasses
 
         public void InitializeRouteAfter()
         {
-            RouteFunctions.Add(Route);
+            RouteFunctions.Add(Authentication);
             RouteFunctions.Add(Group);
+            RouteFunctions.Add(Route);
             RouteFunctions.Add(Cache);
             RouteFunctions.Add(Backends);
-            RouteFunctions.Add(Authentication);
 
 
             foreach (var routeFunction in RouteFunctions)

@@ -1,4 +1,4 @@
-﻿using BroomStick.DataClasses;
+﻿using BroomStick.DataClasses.Authenticator;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 

@@ -14,7 +14,7 @@
                 return CommonAPIResponse.Success;
             }
             if (!request.Headers.ContainsKey("Authenticate")) return CommonAPIResponse.UnAuthorized;
-            if (!Authenticator.AuthenticateToken(request.Headers["Authenticate"])) return CommonAPIResponse.UnAuthorized;
+            if (!Authenticator.Authenticator.AuthenticateToken(request.Headers["Authenticate"])) return CommonAPIResponse.UnAuthorized;
             return CommonAPIResponse.Success;
         }
         public void HandleRequest(HttpRequest request, HttpContent proxiedReuqest)

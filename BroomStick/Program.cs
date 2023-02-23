@@ -1,4 +1,4 @@
-using BroomStick.DataClasses;
+using BroomStick.DataClasses.Authenticator;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -5,29 +5,13 @@
         "path": "/shop/<username>/info"
       },
       "group": {
-        "allowedGroups": [ "Admin" ]
+        "allowedGroups": [ "Admin"]
       },
       "cache": {
         "interval": 1
       },
       "backends": {
         "endpoints": [ "http://192.168.1.108:80" ]
-      }
-    },
-    {
-      "route": {
-        "path": "/test"
-      },
-      "backends": {
-        "endpoints": [ "http://192.168.1.108:4567/v1/server/scommand" ]
-      }
-    },
-    {
-      "route": {
-        "path": "/man10"
-      },
-      "backends": {
-        "endpoints": [ "http://192.168.1.108:8" ]
       }
     }
   ],

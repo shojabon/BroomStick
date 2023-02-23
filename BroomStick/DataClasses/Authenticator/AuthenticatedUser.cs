@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 
-namespace BroomStick.DataClasses
+namespace BroomStick.DataClasses.Authenticator
 {
     public class AuthenticatedUser
     {
@@ -13,6 +13,15 @@ namespace BroomStick.DataClasses
             UserId = userId;
             Username = username;
             Metadata = metadata;
+        }
+
+        public string GetGroup()
+        {
+            if (!Metadata.Contains("permissionGroup"))
+            {
+                return "Guest";
+            }
+            return Metadata.GetElement("permissionGroup").Value.ToString();
         }
     }
 }
