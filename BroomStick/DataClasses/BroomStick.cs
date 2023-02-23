@@ -1,25 +1,26 @@
 ﻿using MongoDB.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace BroomStick.DataClasses
 {
     public class BroomStick
     {
         public static List<RouteObject> RouteObjects { get; } = new List<RouteObject>();
-        public static Authenticator Authenticator { get; } = new Authenticator();
-        public BroomStick()
+        public static IConfiguration? Configuration;
+        public BroomStick(IWebHostEnvironment environment)
         {
+            BroomStick.Configuration = new ConfigurationBuilder()
+            .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .Build();
             this.LoadRoutes();
         }
 
         public void LoadRoutes()
         {
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .Build();
 
-            string? directoryPath = configuration["RoutesDirectory"];
+            string? directoryPath = Configuration["RoutesDirectory"];
             if (string.IsNullOrEmpty(directoryPath))
             {
                 Console.WriteLine("Error: DirectoryPath not specified in appsettings.json");

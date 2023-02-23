@@ -17,22 +17,18 @@ namespace BroomStick.DataClasses
         public static MongoClient? Mongodb = null;
         private IMongoCollection<BsonDocument> Collection;
         static string SecretToken = "testSecretForNow";
-        public Authenticator()
+        public static IConfiguration? Configuration;
+        public Authenticator(IWebHostEnvironment environment)
         {
-            IConfiguration configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            Configuration = new ConfigurationBuilder()
+            .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
             .Build();
-            Mongodb = new MongoClient(configuration["MongodbConnection"]);
+
+            Mongodb = new MongoClient(Configuration["MongodbConnection"]);
 
             // Get the database object
             var database = Mongodb.GetDatabase("BroomStick");
             Collection = database.GetCollection<BsonDocument>("accounts");
-            CreateUser("Sho0uuid", "Sho0", "testpassword", new BsonDocument { });
-            string jtw = Authenticate("Sho0", "testpassword");
-            Console.WriteLine(jtw);
-            Console.WriteLine(AuthenticateToken(jtw));
-            Console.WriteLine(GetUser(jtw).UserId);
-
         }
 
 

@@ -17,13 +17,18 @@ namespace BroomStick.Controllers
             {
                 return new ObjectResult(CommonAPIResponse.RouteNotFound);
             }
-
-            var response = await matchedRoute.ExecuteRequest(Request);
-            if (response == null)
+            try
             {
-                return new ObjectResult(CommonAPIResponse.RouteNotFound);
+                var response = await matchedRoute.ExecuteRequest(Request);
+                if (response == null)
+                {
+                    return new ObjectResult(CommonAPIResponse.RouteNotFound);
+                }
+                return await response.GetObjectResult();
+            }catch(Exception ex)
+            {
+                return await CommonAPIResponse.BackendDisconnected.GetObjectResult();
             }
-            return await response.GetObjectResult();
         }
     }
 }

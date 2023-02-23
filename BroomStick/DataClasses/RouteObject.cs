@@ -23,6 +23,11 @@ namespace BroomStick.DataClasses
 
         public List<IRouteFunction> RouteFunctions = new();
 
+        public RouteObject()
+        {
+            Authentication = new(this);
+        }
+
 
         public async Task<APIResponse?> ExecuteRequest(HttpRequest request)
         {
@@ -92,6 +97,7 @@ namespace BroomStick.DataClasses
             RouteFunctions.Add(Cache);
             RouteFunctions.Add(Backends);
             RouteFunctions.Add(Authentication);
+
 
             foreach (var routeFunction in RouteFunctions)
             {

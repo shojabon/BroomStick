@@ -10,10 +10,12 @@ namespace BroomStick.Controllers
     {
         private readonly BroomStick.DataClasses.BroomStick _broomStick;
         private readonly IConfiguration _config;
+        private readonly Authenticator _authenticator;
 
-        public AuthController(BroomStick.DataClasses.BroomStick broomStick, IConfiguration config)
+        public AuthController(BroomStick.DataClasses.BroomStick broomStick, Authenticator authenticator, IConfiguration config)
         {
             _broomStick = broomStick;
+            _authenticator = authenticator;
             _config = config;
         }
 
@@ -41,7 +43,7 @@ namespace BroomStick.Controllers
             }
             try
             {
-                DataClasses.BroomStick.Authenticator.CreateUser(request.userId, request.username, request.password, request.metadata);
+                _authenticator.CreateUser(request.userId, request.username, request.password, request.metadata);
             }catch(Exception ex) 
             {
                 return BadRequest(ex.Message);
@@ -63,7 +65,7 @@ namespace BroomStick.Controllers
             {
                 return BadRequest("Unauthorized");
             }
-            var token = DataClasses.BroomStick.Authenticator.Authenticate(request.username, request.password);
+            var token = _authenticator.Authenticate(request.username, request.password);
             if (token != null)
             {
                 return Ok(token);

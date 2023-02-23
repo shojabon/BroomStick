@@ -1,3 +1,5 @@
+using BroomStick.DataClasses;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,9 +9,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
-var broomStick = new BroomStick.DataClasses.BroomStick();
 builder.Services.AddSingleton<BroomStick.DataClasses.BroomStick>();
+builder.Services.AddSingleton<Authenticator>();
 var app = builder.Build();
+var broomStick = new BroomStick.DataClasses.BroomStick(app.Environment);
+var authenticator = new Authenticator(app.Environment);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

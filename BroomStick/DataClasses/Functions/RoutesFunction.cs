@@ -25,7 +25,6 @@ namespace BroomStick.DataClasses.Functions
 
             var pattern = Regex.Replace(Regex.Escape(Path), @"\<.*?\>", ".*");
             var match = Regex.Match(route, "^" + pattern + ".*$");
-            Console.WriteLine(pattern + " " + route + " " + match);
             if (match.Success)
             {
                 return true;

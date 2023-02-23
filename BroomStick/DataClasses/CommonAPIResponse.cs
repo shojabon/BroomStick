@@ -10,5 +10,6 @@ namespace BroomStick.DataClasses
         public static readonly APIResponse PermissionInsufficient = new("permission_lacking", "Permission Insufficient", null, 403);
         public static readonly APIResponse RateLimited = new("rate_limited", "Rate limited", null, 429);
         public static readonly APIResponse NoBackendsFound = new("backend_not_found", "No backends found", null, 502);
+        public static readonly APIResponse BackendDisconnected = new("backend_disconnected", "Backend Disconnected", null, 503);
     }
 }
