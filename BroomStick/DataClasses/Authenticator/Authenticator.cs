@@ -116,9 +116,18 @@ namespace BroomStick.DataClasses.Authenticator
             }
         }
 
+        private static Dictionary<string, AuthenticatedUser> cachedUsers = new Dictionary<string, AuthenticatedUser>();
+
         public static AuthenticatedUser GetUser(string token)
         {
             if (token == null) return null;
+
+            // check if user is already in the cache
+            if (cachedUsers.TryGetValue(token, out AuthenticatedUser cachedUser))
+            {
+                return cachedUser;
+            }
+
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
@@ -144,7 +153,11 @@ namespace BroomStick.DataClasses.Authenticator
                     {
                         var userId = user["userId"].AsString;
                         var metadata = user["metadata"].AsBsonDocument;
-                        return new AuthenticatedUser(userId, username, metadata);
+
+                        // add user to cache
+                        cachedUsers[token] = new AuthenticatedUser(userId, username, metadata);
+
+                        return cachedUsers[token];
                     }
                 }
             }
