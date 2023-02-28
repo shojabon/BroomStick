@@ -5,13 +5,13 @@
         "path": "/shop/<username>/info"
       },
       "group": {
-        "allowedGroups": ["Admin", "User", "Guest"]
+        "allowedGroups": ["Admin", "User"]
       },
       "cache": {
         "interval": 10
       },
       "backends": {
-        "endpoints": [ "http://192.168.1.108:80" ]
+        "endpoints": [ "https://minecraft.jp" ]
       }
     }
   ],
