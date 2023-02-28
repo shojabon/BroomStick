@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Collections;
 using System.IdentityModel.Tokens.Jwt;
+using System.Numerics;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,13 +17,15 @@ namespace BroomStick.DataClasses.Authenticator
         private static IMongoCollection<BsonDocument>? Collection;
         static string SecretToken = "testSecretForNow";
         public static IConfiguration? Configuration;
+        public static int AuthenticationDuration = 86400;
+
         public Authenticator(IWebHostEnvironment environment)
         {
             Configuration = new ConfigurationBuilder()
             .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
             .Build();
             SecretToken = Configuration["AuthenticatorSecret"];
-            Console.WriteLine(SecretToken);
+            AuthenticationDuration = int.Parse(Configuration["AuthenticationDuration"]);
 
             Mongodb = new MongoClient(Configuration["MongodbConnection"]);
 
